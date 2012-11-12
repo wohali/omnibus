@@ -12,6 +12,16 @@ function error_exit
 	exit 1
 }
 
+function is_smartos(){
+    uname -v | grep ^joyent 2>&1>/dev/null
+}
+
+if is_smartos; then
+    PREFIX="/opt/local"
+else
+    PREFIX="/usr"
+fi
+
 validation_key=
 organization=
 chef_url=
@@ -61,13 +71,13 @@ if [ "" != "$validation_key" ]; then
   chmod 600 /etc/chef/validation.pem
 fi
 
-ln -sf /opt/opscode/bin/chef-client /usr/bin || error_exit "Cannot link chef-client to /usr/bin"
-ln -sf /opt/opscode/bin/chef-solo /usr/bin || error_exit "Cannot link chef-solo to /usr/bin"
-ln -sf /opt/opscode/bin/knife /usr/bin || error_exit "Cannot link knife to /usr/bin"
-ln -sf /opt/opscode/bin/shef /usr/bin || error_exit "Cannot link shef to /usr/bin"
-ln -sf /opt/opscode/bin/ohai /usr/bin || error_exit "Cannot link ohai to /usr/bin"
+ln -sf /opt/opscode/bin/chef-client $PREFIX/bin || error_exit "Cannot link chef-client to $PREFIX/bin"
+ln -sf /opt/opscode/bin/chef-solo $PREFIX/bin || error_exit "Cannot link chef-solo to $PREFIX/bin"
+ln -sf /opt/opscode/bin/knife $PREFIX/bin || error_exit "Cannot link knife to $PREFIX/bin"
+ln -sf /opt/opscode/bin/shef $PREFIX/bin || error_exit "Cannot link shef to $PREFIX/bin"
+ln -sf /opt/opscode/bin/ohai $PREFIX/bin || error_exit "Cannot link ohai to $PREFIX/bin"
 if [ -h /opt/opscode/bin/chef-server-ctl ]; then
-  ln -sf /opt/opscode/bin/chef-server-ctl /usr/bin || error_exit "Cannot link chef-server-ctl to /usr/bin"
+  ln -sf /opt/opscode/bin/chef-server-ctl $PREFIX/bin || error_exit "Cannot link chef-server-ctl to $PREFIX/bin"
   /usr/bin/chef-server-ctl reconfigure
 fi
 
